@@ -2,19 +2,25 @@ from typing import Callable
 
 
 class GapTree:
-    # ======================= 调用接口：对文本块列表排序 =====================
-    def sort(self, text_blocks: list, get_bbox: Callable):
+    def __init__(self, get_bbox: Callable):
+        """
+        :param get_bbox: 函数，传入单个文本块，
+                        返回该文本块左上角、右下角的坐标元组 (x0, y0, x1, y1)
+        """
+        self.get_bbox = get_bbox
+
+    # ======================= 调用接口 =====================
+    # 对文本块列表排序
+    def sort(self, text_blocks: list):
         """
         对文本块列表，按人类阅读顺序进行排序。
 
         :param text_blocks: 文本块对象列表
-        :param get_bbox: 函数，输入单个文本块，
-                        返回该文本块左上角、右下角的坐标元组 (x0, y0, x1, y1)
         :return: 排序后的文本块列表
         """
 
         # 封装块单元，并求页面左右边缘
-        units, page_l, page_r = self._get_units(text_blocks, get_bbox)
+        units, page_l, page_r = self._get_units(text_blocks, self.get_bbox)
         # 求行和竖切线
         cuts, rows = self._get_cuts_rows(units, page_l, page_r)
         # 求布局树
@@ -30,6 +36,22 @@ class GapTree:
         self.current_nodes = nodes
 
         return new_text_blocks
+
+    # 获取以区块为单位的文本块二层列表
+    def get_nodes_text_blocks(self):
+        """
+        获取以区块为单位的文本块二层列表。需要在 sort 后调用。
+
+        :return: [ [区块1的text_blocks], [区块2的text_blocks]... ]
+        """
+        result = []
+        for node in self.current_nodes:
+            tbs = []
+            if node["units"]:
+                for unit in node["units"]:
+                    tbs.append(unit[1])
+                result.append(tbs)
+        return result
 
     # ======================= 封装块单元列表 =====================
     # 将原始文本块，封装为 ( (x0,y0,x2,y2), 原始 ) 。并检查页边界。
