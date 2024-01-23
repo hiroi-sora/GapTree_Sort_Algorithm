@@ -101,7 +101,9 @@ git clone 本仓库。
 
 - 如果你想用自己的样例，需要导入 [RapidOCR-json](https://github.com/hiroi-sora/RapidOCR-json) ，或者用其它方式获取文本块。结果可视化工具可能不兼容你的块格式，如有报错请留意。
 
-`gap_tree.py` 为算法文件。
+`gap_tree.py` 为主要算法模块。
+
+`paragraph_parse.py` 是一个简单的段内分析器，是后处理步骤之一，但不属于主要算法的范畴。
 
 `visualize.py` 为结果可视化工具，需要`Pillow`库。
 
