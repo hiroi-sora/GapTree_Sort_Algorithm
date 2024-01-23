@@ -103,7 +103,7 @@ git clone 本仓库。
 
 `gap_tree.py` 为主要算法模块。
 
-`paragraph_parse.py` 是一个简单的段内分析器，是后处理步骤之一，但不属于主要算法的范畴。
+`paragraph_parse.py` 是一个简单的段内分析器。OCR后处理步骤之一，但不属于主要算法的范畴。
 
 `visualize.py` 为结果可视化工具，需要`Pillow`库。
 
