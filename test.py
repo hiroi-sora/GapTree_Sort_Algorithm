@@ -5,15 +5,12 @@ import json
 import time
 from pathlib import Path
 
-from gap_tree import GapTree  # gap_tree.py
-
 # 测试图片
 # test_image = "test/1.png"  # 单栏布局，含有表格
-# test_image = "test/2.png"  # 双栏布局，含有跨列的表格、图片
+test_image = "test/2.png"  # 双栏布局，含有跨列的表格、图片
 # test_image = "test/3.png"  # 双栏布局，含有大量列内图片、表格
 # test_image = "test/4.png"  # 四栏布局（两页拼接），含有跨列标题
-test_image = "test/5.png"  # 三栏布局，栏宽度差异大
-# test_image = "test/6.png"
+# test_image = "test/5.png"  # 三栏布局，栏宽度差异大
 
 # 如果使用自己的图片，需要将OCR引擎【RapidOCR_json】放在本目录下。
 # https://github.com/hiroi-sora/RapidOCR-json
@@ -69,6 +66,8 @@ if not text_blocks:
 
 # ======================= 调用间隙树算法进行排序 =====================
 
+from gap_tree import GapTree  # gap_tree.py
+
 t1 = time.time()
 
 
@@ -77,11 +76,34 @@ def tb_bbox(tb):  # 从文本块对象中，提取左上角、右下角坐标元
     return (b[0][0], b[0][1], b[2][0], b[2][1])
 
 
-gtree = GapTree()
-sorted_text_blocks = gtree.sort(text_blocks, tb_bbox)  # 输入文本块，进行排序
+gtree = GapTree(tb_bbox)
+sorted_text_blocks = gtree.sort(text_blocks)  # 输入文本块，进行排序
 
 t2 = time.time()
-print(f"排序完毕。共{len(text_blocks)}个文本块，耗时{(t2-t1):.{6}f}s")
+print(f"排序完毕。共{len(text_blocks)}个文本块，耗时{(t2-t1):.{8}f}s")
+
+# ======================= 进一步：区块内分析段落关系 =====================
+
+from paragraph_parse import ParagraphParse
+
+
+def get_info(tb):  # 返回信息
+    b = tb["box"]
+    return ((b[0][0], b[0][1], b[2][0], b[2][1]), tb["text"])
+
+
+def set_end(tb, end):  # 获取预测的块尾分隔符
+    tb["end"] = end
+    # 也可以： tb["text"] += end
+
+
+pp = ParagraphParse(get_info, set_end)
+# 获取所有区块的文本块
+nodes_text_blocks = gtree.get_nodes_text_blocks()
+for tbs in nodes_text_blocks:
+    tbs = pp.run(tbs)  # 预测结尾分隔符
+    for tb in tbs:  # 输出文本和结尾分隔符
+        print(tb["text"], end=tb["end"])
 
 # ======================= 测试：结果可视化 =====================
 
