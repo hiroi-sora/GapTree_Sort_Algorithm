@@ -1,3 +1,8 @@
+# 【间隙·树·排序算法】 GapTree_Sort_Algorithm
+# 对OCR结果或PDF提取的文本进行版面分析，按人类阅读顺序进行排序。
+# Author: hiroi-sora
+# https://github.com/hiroi-sora/GapTree_Sort_Algorithm
+
 from typing import Callable
 
 
