@@ -42,7 +42,6 @@ def _estimateRotation(textBlocks):
 
 # 获取旋转后的标准bbox。angle_threshold为执行旋转的阈值（最小角度值）。
 def _getBboxes(textBlocks, rotation_rad):
-    # 执行旋转的阈值，±3°
     # 角度低于阈值（接近0°），则不进行旋转，以提高性能。
     if abs(rotation_rad) <= angle_threshold_rad:
         bboxes = [

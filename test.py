@@ -11,7 +11,7 @@ test_image = "test/2.png"  # 双栏布局，含有跨列的表格、图片
 # test_image = "test/3.png"  # 双栏布局，含有大量列内图片、表格
 # test_image = "test/4.png"  # 四栏布局（两页拼接），含有跨列标题
 # test_image = "test/5.png"  # 三栏布局，栏宽度差异大
-test_image = "test/5_r.png"  # 样例5的旋转版本
+# test_image = "test/5_r.png"  # 样例5的旋转版本
 # test_image = "test/6.png"  # 竖排，双栏布局。（可视化显示可能有问题，但结果顺序是对的）
 # test_image = "test/6_r.png"  # 样例6的旋转版本
 
