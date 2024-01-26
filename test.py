@@ -11,6 +11,9 @@ test_image = "test/2.png"  # 双栏布局，含有跨列的表格、图片
 # test_image = "test/3.png"  # 双栏布局，含有大量列内图片、表格
 # test_image = "test/4.png"  # 四栏布局（两页拼接），含有跨列标题
 # test_image = "test/5.png"  # 三栏布局，栏宽度差异大
+test_image = "test/5_r.png"  # 样例5的旋转版本
+# test_image = "test/6.png"  # 竖排，双栏布局。（可视化显示可能有问题，但结果顺序是对的）
+# test_image = "test/6_r.png"  # 样例6的旋转版本
 
 # 如果使用自己的图片，需要将OCR引擎【RapidOCR_json】放在本目录下。
 # https://github.com/hiroi-sora/RapidOCR-json
@@ -64,11 +67,23 @@ if not text_blocks:
         print(f"RapidOCR-json 调用失败。")
         exit()
 
+# ======================= 标准化bbox =====================
+# 将旋转、竖排等文本块，转为标准横排。此步可忽略。
+
+from preprocessing import linePreprocessing
+
+t1 = time.time()
+bboxes = linePreprocessing(text_blocks)
+t2 = time.time()
+
+print(f"预处理完毕。共{len(text_blocks)}个文本块，耗时{(t2-t1):.{8}f}s")
+
+for i, tb in enumerate(text_blocks):
+    tb["bbox"] = bboxes[i]  # 写入标准化的bbox
+
 # ======================= 调用间隙树算法进行排序 =====================
 
 from gap_tree import GapTree  # gap_tree.py
-
-t1 = time.time()
 
 
 def tb_bbox(tb):  # 从文本块对象中，提取左上角、右下角坐标元组
@@ -76,10 +91,12 @@ def tb_bbox(tb):  # 从文本块对象中，提取左上角、右下角坐标元
     return (b[0][0], b[0][1], b[2][0], b[2][1])
 
 
-gtree = GapTree(tb_bbox)
-sorted_text_blocks = gtree.sort(text_blocks)  # 输入文本块，进行排序
+gtree = GapTree(lambda tb: tb["bbox"])
 
+t1 = time.time()
+sorted_text_blocks = gtree.sort(text_blocks)  # 输入文本块，进行排序
 t2 = time.time()
+
 print(f"排序完毕。共{len(text_blocks)}个文本块，耗时{(t2-t1):.{8}f}s")
 
 # ======================= 进一步：区块内分析段落关系 =====================
@@ -104,6 +121,7 @@ for tbs in nodes_text_blocks:
     tbs = pp.run(tbs)  # 预测结尾分隔符
     for tb in tbs:  # 输出文本和结尾分隔符
         print(tb["text"], end=tb["end"])
+print()
 
 # ======================= 测试：结果可视化 =====================
 
