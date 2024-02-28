@@ -2,7 +2,7 @@
 
 由 [hiroi-sora](https://github.com/hiroi-sora) 个人开发的，基于文本位置的版面分析/文本排序算法。适用于将OCR得到的文本块，按人类阅读顺序进行排序。特别针对多栏布局的报刊型排版。可能也适用于PDF解析等依赖版面分析的领域。
 
-未来，它将嵌入到 [Umi-OCR](https://github.com/hiroi-sora/Umi-OCR) 中，为文档识别等功能提供后处理支持。
+已内置于 [Umi-OCR](https://github.com/hiroi-sora/Umi-OCR) ，为文档识别等功能提供后处理支持。
 
 演示效果：请查看下方大图。图中从左到右有四个部分：
 1. 原始OCR结果，存在一些错误排序，特别是无法区分不同列。
